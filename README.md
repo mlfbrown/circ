@@ -1,6 +1,6 @@
 # CirC: The Circuit Compiler
 
-CirC is a *compiler infrastructure* which supports compilation from
+CirC is a *compiler infrastructure* that supports compilation from
 high-level (stateful, uniform) languages to (state-free, non-uniform,
 existentially quantified) circuits.
 
