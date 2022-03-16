@@ -14,7 +14,16 @@ pub type PlainStmt = Stmt<()>;
 /// Temporary
 pub type TypedStmt = Stmt<Sort>;
 
-/// A statement node
+/// A "typed" AST provides accessors that allow us to automatically extract
+/// the types of nodes. This is important for lowering to the IR representation:
+/// the IR requires type information for each variable and literal. 
+trait Typed {
+    fn get_type(&self) -> Sort; 
+}
+
+/// A statement node. (Test will move to high-level AST description)
+/// Statements are parameterized over arbitrary metadata---for example, custom types,
+/// source spans, analysis information, and more. 
 pub enum Stmt<T> {
     /// An assignment. For now, we only support assignment statements.
     /// In the future, we have a few options:
