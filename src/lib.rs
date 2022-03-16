@@ -7,6 +7,7 @@
 
 #[macro_use]
 pub mod ir;
+pub mod ast;
 pub mod circify;
 pub mod front;
 pub mod target;
