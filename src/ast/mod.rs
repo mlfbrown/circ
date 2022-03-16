@@ -4,7 +4,9 @@
 //! it allows stateful operations and control flow. The most important
 //! types and functions are:
 //!
-//!    * AST 
+//!    * AST
+//!
+//! MLFB note: We may to having each enum take a struct for accessor reasons
 
 /// A statement node
 pub enum Stmt {
@@ -15,7 +17,14 @@ pub enum Stmt {
     /// 3. Support both assignment statements and expressions, but have a check that ensures
     ///    you don't intermix both in the same AST (because that seems...concerning?)
     AssignStmt(Var, Expr),
-    
+    /// A return
+    ReturnStmt(Option<Expr>), 
+    /// An If statement, with optional branch for optional else. 
+    IfStmt(Expr, Box<Stmt>, Option<Box<Stmt>>),
+    /// A while loop.
+    WhileStmt(Expr, Box<Stmt>),
+    /// A compound statement (i.e., a list of statements)
+    CompoundStmt(Vec<Box<Stmt>>), 
 }
 
 /// An expression node (e.g., x + 5) 
@@ -23,7 +32,21 @@ pub enum Expr {
     /// A constant (e.g., 5)
     ConstExpr(Literal),
     /// A variable (e.g., x)
-    VarExpr(Var)
+    VarExpr(Var),
+    /// A binary expression (e.g., x + 5)
+    BinExpr(BinOp, Box<Expr>, Box<Expr>), 
+}
+
+/// A binary operator. Note: distinct from comparison 
+pub enum BinOp {
+    /// +
+    AddOp,
+    /// -
+    SubOp,
+    /// *
+    MulOp,
+    /// / 
+    DivOp, 
 }
 
 /// A variable (e.g., x) 
