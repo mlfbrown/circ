@@ -21,10 +21,34 @@ trait Typed {
     fn get_type(&self) -> Sort; 
 }
 
+/// Part of a translation unit.
+/// MLFB note: probably wrong terminology since this is language-independent and
+/// not C or C++ specific, but whatever for now. 
+pub enum TransUnitPart<T> {
+    /// Global variable declaration
+    GlobalDecl(Var<T>),
+    /// Function declaration (temporary?)
+    FunctionDecl(Var<T>, Vec<Var<T>>),
+    /// Function definition
+    FunctionDef(Function<T>), 
+}
+
+/// A function definition 
+pub struct Function<T> {
+    /// Name and return type 
+    pub name: Var<T>,
+    /// Arguments 
+    pub args: Vec<Var<T>>,
+    /// Function body 
+    pub body: Stmt<T>,
+}
+
 /// A statement node. (Test will move to high-level AST description)
 /// Statements are parameterized over arbitrary metadata---for example, custom types,
 /// source spans, analysis information, and more. 
 pub enum Stmt<T> {
+    /// Declare variable with type 
+    DeclStmt(Var<T>), 
     /// An assignment. For now, we only support assignment statements.
     /// In the future, we have a few options:
     /// 1. Keep it that way (and let C AST -> generic AST mappers figure it out)

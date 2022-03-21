@@ -4,4 +4,3 @@
 pub mod term;
 pub mod opt;
 pub mod proof;
-pub mod lower;
