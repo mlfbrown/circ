@@ -21,6 +21,15 @@ trait Typed {
     fn get_type(&self) -> Sort; 
 }
 
+/// A translation unit. See note below
+/// Expect to expand this definition
+pub struct TransUnit<T> {
+    /// Filename for the translation unit
+    pub filename: String,
+    /// Contents 
+    pub units: Vec<TransUnitPart<T>>,
+}
+
 /// Part of a translation unit.
 /// MLFB note: probably wrong terminology since this is language-independent and
 /// not C or C++ specific, but whatever for now. 
@@ -102,3 +111,19 @@ pub enum Literal {
     BoolLit(bool),
 }
 
+/// Struct for lowering from AST to IR.
+/// It lives here for now but all of this will probably move.
+pub struct IRGen {
+    /// Dummy
+    pub dummy: String, 
+}
+
+// QUESTION RSW: threading through trait bounds
+// Basically: it has to be typed 
+impl IRGen<T> {
+
+    fn gen_expr(&mut self, e: Expr<T>) -> Result<(), ()> {
+	panic!()
+    }
+    
+}
