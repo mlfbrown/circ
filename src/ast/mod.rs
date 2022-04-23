@@ -15,6 +15,7 @@ pub type PlainStmt = Stmt<()>;
 /// Temporary
 pub type TypedStmt = Stmt<Sort>;
 
+
 /// A "typed" AST provides accessors that allow us to automatically extract
 /// the types of nodes. This is important for lowering to the IR representation:
 /// the IR requires type information for each variable and literal. 
@@ -106,6 +107,12 @@ pub struct Var<T> {
     pub meta: T,
 }
 
+impl<T: Typed> Typed for Var<T> {
+    fn get_type(&self) -> Sort {
+	self.meta.get_type()
+    }
+}
+
 /// A literal
 pub enum Literal {
     /// Booleans (e.g., true)
@@ -147,6 +154,11 @@ impl ASTGen {
 	    }
 	    _ => unimplemented!()
 	}
+    }
+
+    fn lower_var<T: Typed>(&self, v: Var<T>) -> Term {
+	let sort = v.get_type();
+	panic!()
     }
 
 }
