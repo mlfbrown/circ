@@ -7,7 +7,8 @@
 //!    * AST
 //!
 //! MLFB note: We may to having each enum take a struct for accessor reasons
-use crate::ir::term::Sort; 
+use crate::ir::term::{Sort, Term, Op, TermData, term};
+use crate::ir::term::{BV_ADD, BV_SUB, BV_MUL, BV_UDIV};
 
 /// Temporary 
 pub type PlainStmt = Stmt<()>;
@@ -17,7 +18,7 @@ pub type TypedStmt = Stmt<Sort>;
 /// A "typed" AST provides accessors that allow us to automatically extract
 /// the types of nodes. This is important for lowering to the IR representation:
 /// the IR requires type information for each variable and literal. 
-trait Typed {
+pub trait Typed {
     fn get_type(&self) -> Sort; 
 }
 
@@ -113,17 +114,40 @@ pub enum Literal {
 
 /// Struct for lowering from AST to IR.
 /// It lives here for now but all of this will probably move.
-pub struct IRGen {
+pub struct ASTGen {
     /// Dummy
-    pub dummy: String, 
+    pub dummy: u32,
 }
 
-// QUESTION RSW: threading through trait bounds
-// Basically: it has to be typed 
-impl IRGen<T> {
+impl ASTGen {
 
-    fn gen_expr(&mut self, e: Expr<T>) -> Result<(), ()> {
-	panic!()
+    /// Make a new lowering struct (ASTGen) 
+    pub fn new() -> Self {
+	ASTGen { dummy: 32 }
     }
-    
+
+    /// Lower a translation unit from AST to IR
+    pub fn lower_trans_unit<T: Typed> (trans_unit: TransUnit<T>) -> () {
+
+    }
+
+    /// Lower an expression from AST to IR
+    fn lower_expr<T: Typed>(&self, expr: Expr<T>) -> Term {
+	match expr {
+	    Expr::BinExpr(op, left, right) => {
+		let left_term = self.lower_expr(*left);
+		let right_term = self.lower_expr(*right);
+		let args = vec![left_term, right_term];
+		match op {
+		    AddOp => term(BV_ADD, args),
+		    SubOp => term(BV_SUB, args),
+		    MulOp => term(BV_MUL, args),
+		    DivOp => term(BV_UDIV, args), 
+		}
+	    }
+	    _ => unimplemented!()
+	}
+    }
+
 }
+
