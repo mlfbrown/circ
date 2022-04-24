@@ -128,11 +128,12 @@ pub enum Literal {
 /// Ask Alex what this is/should be 
 pub struct ASTDef;
 
-// Term is an IR term
-// Sort is the type of 
-
 impl Embeddable for ASTDef {
+    /// Terms in the low-level AST are just IR terms.
+    /// It's possible that we'll want a custom term type users define themselves (e.g., in
+    /// the C version it would be CTerm), but I'm doing it this way for now. 
     type T = Term;
+    /// ...and thus, the types of IR terms are just sorts 
     type Ty = Sort;
 
     fn declare(
@@ -173,7 +174,7 @@ impl Embeddable for ASTDef {
 /// Struct for lowering from AST to IR.
 /// It lives here for now but all of this will probably move.
 pub struct ASTGen {
-//    circ: Circify<ASTDef>, 
+   circ: Circify<ASTDef>, 
 }
 
 impl ASTGen {
@@ -184,7 +185,13 @@ impl ASTGen {
     }
 
     pub fn lower_stmt<T: Typed> (stmt: Stmt<T>) -> () {
-	
+	match stmt {
+	    Stmt::DeclStmt(var) => panic!(),
+	    Stmt::AssignStmt(lhs, rhs) => panic!(),
+	    Stmt::ReturnStmt(to_ret) => panic!(),
+	    Stmt::IfStmt(cond, true_br, false_br) => panic!(),
+	    _ => unimplemented!(),
+	}
     }
     
     /// Lower an expression from AST to IR
@@ -213,3 +220,14 @@ impl ASTGen {
 
 }
 
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_add() {
+        assert_eq!(3, 3);
+    }
+    
+}

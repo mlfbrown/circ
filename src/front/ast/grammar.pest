@@ -1,0 +1,3 @@
+literal = { decimal_literal | boolean_literal }
+boolean_literal = @{ "true" | "false" }
+decimal_literal = @{ "0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT* }
