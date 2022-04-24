@@ -1,5 +1,7 @@
-//! High-level AST definition
+//! Low-level, generic AST definition
 //!
+//! This generic AST assumes that type checking has already taken place
+//! 
 //! Unlike the IR (src/ir), the AST follows the RAM/register model:
 //! it allows stateful operations and control flow. The most important
 //! types and functions are:
@@ -10,7 +12,7 @@
 //! MLFB note: Say something about the semantics of operators being lower level
 //! (e.g., not wrapping say C shift semantics and insteading following SMT lib)
 use crate::circify::{Circify, Embeddable, CirCtx};
-use crate::ir::term::{Sort, Term, Op, PartyId, term};
+use crate::ir::term::{Sort, Term, Op, PartyId, term, check};
 use crate::ir::term::{BV_ADD, BV_SUB, BV_MUL, BV_UDIV};
 
 /// Temporary 
@@ -126,6 +128,9 @@ pub enum Literal {
 /// Ask Alex what this is/should be 
 pub struct ASTDef;
 
+// Term is an IR term
+// Sort is the type of 
+
 impl Embeddable for ASTDef {
     type T = Term;
     type Ty = Sort;
@@ -139,7 +144,11 @@ impl Embeddable for ASTDef {
 	visibility: Option<PartyId>,
     ) -> Self::T { panic! () }
 
-    fn ite(&self, _ctx: &mut CirCtx, cond: Term, t: Self::T, f: Self::T) -> Self::T { panic!() }
+    fn ite(&self, _ctx: &mut CirCtx, cond: Term, t: Self::T, f: Self::T) -> Self::T {
+	assert!(check(&t) == check(&f));
+	// Make sure it's only allowed sorts too
+	term![Op::Ite; cond, t, f]
+    }
 
     fn assign(
         &self,
@@ -148,11 +157,14 @@ impl Embeddable for ASTDef {
         name: String,
         t: Self::T,
         visibility: Option<PartyId>,
-    ) -> Self::T { panic!() }
+    ) -> Self::T {
+	assert!(check(&t) == *ty);
+	ctx.cs.borrow_mut().assign(&name, t, visibility)
+    }
 
     fn values(&self) -> bool { false }
 
-    fn type_of(&self, term: &Self::T) -> Self::Ty { panic!() }
+    fn type_of(&self, term: &Self::T) -> Self::Ty { check(term) }
 
     fn initialize_return(&self, ty: &Self::Ty, _ssa_name: &String) -> Self::T { panic!() }
 }
