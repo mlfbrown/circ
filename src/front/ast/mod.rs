@@ -1,14 +1,23 @@
-//! Front-end for directly parsing low-level AST code. 
-//! This is intended mostly for (differential) testing.
+//! Front-end for directly parsing low-level AST code, and low-level AST definition. 
+//! MLF: type checking already
+//! MLF: fix Unlike the IR (src/ir), the AST follows the RAM/register model:
+//! it allows stateful operations and control flow.
 
 use pest::error::Error;
 use pest::Parser;
 use pest_derive::Parser;
+use pest_ast::FromPest;
+use pest::Span;
 
 /// Pest parser for the AST 
 #[derive(Parser)]
 #[grammar = "front/ast/grammar.pest"] // relative to src
 struct ASTParser;
+
+fn span_into_str(span: Span) -> &str {
+    span.as_str()
+}
+
 
 /// A translation unit. See note below
 /// Expect to expand this definition
@@ -99,4 +108,16 @@ pub enum Literal {
     BoolLit(bool),
 }
 
+#[derive(Debug, FromPest, PartialEq, Clone)]
+#[pest_ast(rule(Rule::boolean_literal))]
+pub struct BooleanLiteral {
+    #[pest_ast(inner(with(span_into_str), with(to_bool)))]
+    pub value: bool, 
+}
 
+pub fn to_bool(string: &str) -> bool {
+    match string {
+	"true" => true,
+	"false" => false,
+    }	
+}

@@ -1,5 +1,6 @@
 //! Input language front-ends
 
+pub mod ast;
 #[cfg(feature = "c")]
 pub mod c;
 pub mod datalog;
