@@ -123,5 +123,6 @@ pub fn to_bool(string: &str) -> bool {
     match string {
 	"true" => true,
 	"false" => false,
+	_ => panic!()
     }	
 }
