@@ -1,13 +1,4 @@
-//! Low-level, generic AST definition
-//!
-//! This generic AST assumes that type checking has already taken place
-//! 
-//! Unlike the IR (src/ir), the AST follows the RAM/register model:
-//! it allows stateful operations and control flow. The most important
-//! types and functions are:
-//!
-//!    * AST
-//!
+//! Lowering from AST to IR 
 //! MLFB note: We may to having each enum take a struct for accessor reasons
 //! MLFB note: Say something about the semantics of operators being lower level
 //! (e.g., not wrapping say C shift semantics and insteading following SMT lib)
@@ -22,7 +13,6 @@ pub type PlainStmt = Stmt<()>;
 /// Temporary
 pub type TypedStmt = Stmt<Sort>;
 
-
 /// A "typed" AST provides accessors that allow us to automatically extract
 /// the types of nodes. This is important for lowering to the IR representation:
 /// the IR requires type information for each variable and literal. 
@@ -30,6 +20,7 @@ pub trait Typed {
     fn get_type(&self) -> Sort; 
 }
 
+/// Ultimately, we just need variable type information 
 impl<T: Typed> Typed for Var<T> {
     fn get_type(&self) -> Sort {
 	self.meta.get_type()
@@ -82,9 +73,7 @@ impl Embeddable for ASTDef {
     fn initialize_return(&self, ty: &Self::Ty, _ssa_name: &String) -> Self::T { panic!() }
 }
 
-
 /// Struct for lowering from AST to IR.
-/// It lives here for now but all of this will probably move.
 pub struct ASTGen {
    circ: Circify<ASTDef>, 
 }

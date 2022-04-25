@@ -108,6 +108,10 @@ pub enum Literal {
     BoolLit(bool),
 }
 
+pub struct IntLit {
+    pub value: u32, 
+}
+
 #[derive(Debug, FromPest, PartialEq, Clone)]
 #[pest_ast(rule(Rule::boolean_literal))]
 pub struct BooleanLiteral {
